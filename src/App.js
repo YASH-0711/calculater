@@ -1,6 +1,5 @@
-import logo from "./logo.svg";
 import "./App.css";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 function App() {
   const [currentDate, setCurrentDate] = useState("");
@@ -15,13 +14,13 @@ function App() {
     setCurrentDate(today);
   }, []);
 
-  const resetForm = () => {
-    setPastDate("");
-    setAmount("");
-    setDays(0);
-    setInterest(0);
-    setTotal(0);
-  };
+  // const resetForm = () => {
+  //   setPastDate("");
+  //   setAmount("");
+  //   setDays(0);
+  //   setInterest(0);
+  //   setTotal(0);
+  // };
 
   const getInterestRate = (amount) => {
     if (amount === 2000) return 4;
