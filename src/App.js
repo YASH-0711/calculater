@@ -22,44 +22,46 @@ function App() {
   //   setTotal(0);
   // };
 
-  const getInterestRate = (amount) => {
-    if (amount === 2000) return 4;
-    else if (amount >= 2001 && amount <= 9999) return 3;
-    else if (amount >= 10000 && amount <= 49999) return 2.5;
-    else if (amount >= 50000) return 2;
-    else return 0;
-  };
+  const calculateInterest = () => {
+  if (!pastDate || !amount) {
+    alert("Please fill all fields");
+    return;
+  }
 
-  const calculateInterests = () => {
-    const startDate = new Date(pastDate);
-    const endDate = new Date(currentDate);
+  const amountNum = parseFloat(amount);
+  if (isNaN(amountNum) || amountNum <= 0) {
+    alert("Enter a valid amount");
+    return;
+  }
 
-    const daysDiff = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24));
-    const rate = getInterestRate(amount);
+  const start = new Date(pastDate);
+  const end = new Date(currentDate);
+  const diffTime = Math.abs(end - start);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  const effectiveDays = diffDays < 30 ? 30 : diffDays;
 
-    let totalInterest = 0;
+  // Determine rate
+  let rate = 0;
+  if (amountNum <= 2000) {
+    rate = 0.04;
+  } else if (amountNum <= 9999) {
+    rate = 0.03;
+  } else if (amountNum <= 49999) {
+    rate = 0.025;
+  } else {
+    rate = 0.02;
+  }
 
-    if (daysDiff <= 30) {
-      // Interest for 1 full month
-      totalInterest = (amount * rate) / 100 / 12;
-    } else if (daysDiff < 60) {
-      // Interest based on actual days
-      const dailyInterest = (amount * rate) / 100 / 365;
-      totalInterest = dailyInterest * daysDiff;
-    } else {
-      // Interest for full months beyond 2 months
-      const monthlyInterest = (amount * rate) / 100 / 12;
-      const months = Math.floor(daysDiff / 30);
-      totalInterest = monthlyInterest * months;
-    }
-    const amountNum = parseFloat(amount);
-    const totalAmount = (amountNum + parseFloat(totalInterest)).toFixed(2);
+  // Calculate interest
+  const interestAmount = ((amountNum * rate * effectiveDays) / 30).toFixed(2);
+  const totalAmount = (amountNum + parseFloat(interestAmount)).toFixed(2);
 
-    setDays(daysDiff);
-    setInterest(totalInterest.toFixed(2));
-    setTotal(totalAmount);
-    // setRateUsed(rate);
-  };
+  setDays(diffDays);       // Actual days shown
+  // setRateUsed(rate);       // Rate shown in UI
+  setInterest(interestAmount);
+  setTotal(totalAmount);
+};
+
 
   return (
     <div className="container">
@@ -86,7 +88,7 @@ function App() {
         <label>Days</label>
         <input type="number" placeholder="Enter Amount" value={days} readOnly />
 
-        <button onClick={calculateInterests}>Calculate</button>
+        <button onClick={calculateInterest}>Calculate</button>
         {/* <button className="reset-btn" onClick={resetForm}>Reset</button> */}
 
         <div className="output">
